@@ -5,7 +5,7 @@ import os
 
 # importando os elementos definidos no modelo
 from model.base import Base
-from model.jogo import Jogo
+from model.videogame import Videogame
 
 db_path = "database/"
 # Verifica se o diretorio não existe
