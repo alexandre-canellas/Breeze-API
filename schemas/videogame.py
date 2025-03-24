@@ -19,6 +19,13 @@ class SearchOneGameSchema(BaseModel):
 
     title: str = "Super Mario Bros"
 
+class ProdutoDelSchema(BaseModel):
+    """ 
+    Define como deve ser a estrutura do dado retornado após uma requisição de remoção
+    """
+
+    message: str = "Videogame Super Mario Bros deletado com sucesso!"
+
 def show_searched_game(videogame: Videogame):
     """
     Retorna os atributos de um videogame pesquisado

@@ -5,9 +5,9 @@ from urllib.parse import unquote
 from sqlalchemy.exc import IntegrityError
 
 from model import Session, Videogame
-from schemas import VideogameSchema, SearchOneGameSchema, ErrorSchema, show_searched_game
+from schemas import VideogameSchema, SearchOneGameSchema, ErrorSchema, ProdutoDelSchema, show_searched_game
 
-info = Info(title="Breeze API", version="1.0.1", description="Uma API voltada para plataforma de jogos eletrônicos")
+info = Info(title="Breeze API", version="1.0.2", description="Uma API voltada para plataforma de jogos eletrônicos")
 app = OpenAPI(__name__, info=info)
 
 @app.get('/')
@@ -17,7 +17,7 @@ def home():
     return redirect('/openapi')
 
 @app.post('/videogame', 
-          responses={"200": VideogameSchema, "400": ErrorSchema, "409": ErrorSchema})
+          responses={"200": VideogameSchema, "409": ErrorSchema, "500": ErrorSchema})
 def add_videogame(form: VideogameSchema):
     """
     Cadastra um videogame novo na base com seus atributos
@@ -46,11 +46,12 @@ def add_videogame(form: VideogameSchema):
         return "Videogame já cadastrado na base, tente outro titulo!", 409
 
     except Exception as e:
-
-        return "Erro ao cadastrar item", 400
+        # Erro inesperado
+        
+        return "Erro ao cadastrar item", 500
     
 @app.get('/videogame',
-         responses={"200": VideogameSchema, "404": ErrorSchema})
+         responses={"200": VideogameSchema, "404": ErrorSchema, "500": ErrorSchema})
 def search_videogame(query: SearchOneGameSchema):
     """
     Procura um videogame específico na base de acordo com o seu título
@@ -76,6 +77,40 @@ def search_videogame(query: SearchOneGameSchema):
             return "Videogame não encontrado, tente outro!", 404
         
     except Exception as e:
+        # Erro inesperado
+
+        return "Erro de servidor", 500
+
+@app.delete('/videogame',
+            responses={"200": ProdutoDelSchema, "404": ErrorSchema, "500": ErrorSchema})
+def delete_videogame(query: SearchOneGameSchema):
+    """
+    Pesquisa um videogame específico na base de acordo com seu titulo
+    Deleta o videogame da base caso encontrado
+    """
+
+    try:
+
+        # Coleta o videogame a ser buscado
+        searched_game = query.title
+
+        # Inicia a sessão para busca e deleção do item
+        session = Session()
+
+        deleted_game = session.query(Videogame).filter(Videogame.title == searched_game).delete()
+        session.commit()
+
+        if deleted_game:
+            # Videogame encontrado e deletado
+
+            return f"Videogame {searched_game} removido com sucesso!", 200
+        
+        else:
+
+            return "Videogame não encontrado!", 404
+    
+    except Exception as e:
+        # Erro inesperado
 
         return "Erro de servidor", 500
 
