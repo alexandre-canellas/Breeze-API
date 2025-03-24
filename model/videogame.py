@@ -13,7 +13,7 @@ class Videogame(Base):
     developer = Column(String(140))
     category = Column(String(140))
     price = Column(Float)
-    launch_date = Column(String, default=str(datetime.today()))
+    launch_date = Column(String, default=str(datetime.now().date()))
 
     # TODO: Adicionar uma tabela de reviews que contemplem uma classificação
     # podendo ser positiva ou negativa

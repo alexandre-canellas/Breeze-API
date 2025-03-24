@@ -5,9 +5,9 @@ from urllib.parse import unquote
 from sqlalchemy.exc import IntegrityError
 
 from model import Session, Videogame
-from schemas import VideogameSchema, SearchOneGameSchema, ErrorSchema
+from schemas import VideogameSchema, SearchOneGameSchema, ErrorSchema, show_searched_game
 
-info = Info(title="Breeze API", version="1.0.0", description="Uma API voltada para plataforma de jogos eletrônicos")
+info = Info(title="Breeze API", version="1.0.1", description="Uma API voltada para plataforma de jogos eletrônicos")
 app = OpenAPI(__name__, info=info)
 
 @app.get('/')
@@ -69,7 +69,7 @@ def search_videogame(query: SearchOneGameSchema):
         if game:
             # Videogame encontrado
             
-            return f"{game.title} encontrado!", 200
+            return show_searched_game(game), 200
         
         else:
 
