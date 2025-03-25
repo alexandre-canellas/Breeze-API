@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from model.videogame import Videogame
+from typing import List, Optional
 
 class VideogameSchema(BaseModel):
     """ 
@@ -10,7 +11,15 @@ class VideogameSchema(BaseModel):
     developer: str = "Nintendo"
     category: str = "Plataforma"
     price: float = 300.00
-    launch_date: str = "1983-09-13"
+    launch_date: Optional[str] = "1983-09-13"
+
+class AllVideogamesSchema(BaseModel):
+    """
+    Define como será o retorno da busca por todos os videogames
+    """
+
+    videogame_count: int = 1
+    videogames: List[VideogameSchema]
 
 class SearchOneGameSchema(BaseModel):
     """
@@ -37,4 +46,26 @@ def show_searched_game(videogame: Videogame):
         "category": videogame.category,
         "price": videogame.price,
         "launch_date": videogame.launch_date
+    }
+
+def show_all_games(videogames: List[Videogame]):
+    """
+    Retorna a contagem de videogames cadastrados e uma lista com os atributos de cada um
+    """
+
+    game_list = []
+
+    for game in videogames:
+        game_list.append(
+            {
+                "title": game.title,
+                "developer": game.developer,
+                "category": game.category,
+                "price": game.price
+            }
+        )
+
+    return {
+        "videogame_count": len(game_list),
+        "videogames": game_list
     }

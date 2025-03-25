@@ -5,9 +5,9 @@ from urllib.parse import unquote
 from sqlalchemy.exc import IntegrityError
 
 from model import Session, Videogame
-from schemas import VideogameSchema, SearchOneGameSchema, ErrorSchema, ProdutoDelSchema, show_searched_game
+from schemas import *
 
-info = Info(title="Breeze API", version="1.0.2", description="Uma API voltada para plataforma de jogos eletrônicos")
+info = Info(title="Breeze API", version="1.0.3", description="Uma API voltada para plataforma de jogos eletrônicos")
 app = OpenAPI(__name__, info=info)
 
 @app.get('/')
@@ -15,6 +15,8 @@ def home():
     """Redireciona para /openapi, tela que permite a escolha do estilo de documentação.
     """
     return redirect('/openapi')
+
+####################################        ROUTE DE CADASTRO       ####################################
 
 @app.post('/videogame', 
           responses={"200": VideogameSchema, "409": ErrorSchema, "500": ErrorSchema})
@@ -50,6 +52,8 @@ def add_videogame(form: VideogameSchema):
         
         return "Erro ao cadastrar item", 500
     
+####################################        ROUTE DE BUSCA       ####################################
+    
 @app.get('/videogame',
          responses={"200": VideogameSchema, "404": ErrorSchema, "500": ErrorSchema})
 def search_videogame(query: SearchOneGameSchema):
@@ -80,6 +84,36 @@ def search_videogame(query: SearchOneGameSchema):
         # Erro inesperado
 
         return "Erro de servidor", 500
+    
+@app.get('/all_videogames',
+         responses={"200": AllVideogamesSchema, "500": ErrorSchema})
+def search_all_videogames():
+    """
+    Procura por todos os videogames cadastrados na base, sem filtros de busca
+    Retorna com todos os itens e seus atributos, incluindo uma contagem dos itens
+    """
+
+    try:
+
+        # Inicia a sessão para busca completa da base
+        session = Session()
+        games = session.query(Videogame).all()
+        
+        if games:
+            # Existe ao menos um videogame cadastrado
+            
+            return show_all_games(games), 200
+        
+        else:
+
+            return {"videogame_count": 0, "videogames":[]}, 200
+        
+    except Exception as e:
+        # Erro inesperado
+
+        return "Erro de servidor", 500
+    
+####################################        ROUTE DE DELEÇÃO       ####################################
 
 @app.delete('/videogame',
             responses={"200": ProdutoDelSchema, "404": ErrorSchema, "500": ErrorSchema})
