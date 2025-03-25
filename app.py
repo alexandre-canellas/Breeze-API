@@ -12,9 +12,9 @@ app = OpenAPI(__name__, info=info)
 
 @app.get('/')
 def home():
-    """Redireciona para /openapi, tela que permite a escolha do estilo de documentação.
+    """Redireciona para /openapi, com estilo de documentação sendo Swagger.
     """
-    return redirect('/openapi')
+    return redirect('/openapi/swagger')
 
 ####################################        ROUTE DE CADASTRO       ####################################
 
