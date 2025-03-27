@@ -7,8 +7,11 @@ from sqlalchemy.exc import IntegrityError
 from model import Session, Videogame
 from schemas import *
 
+from flask_cors import CORS # Necessário para requisições com API e Front em repopsitórios distintos
+
 info = Info(title="Breeze API", version="1.0.3", description="Uma API voltada para plataforma de jogos eletrônicos")
 app = OpenAPI(__name__, info=info)
+CORS(app)
 
 @app.get('/')
 def home():
@@ -126,7 +129,7 @@ def delete_videogame(query: SearchOneGameSchema):
     try:
 
         # Coleta o videogame a ser buscado
-        searched_game = query.title
+        searched_game = unquote(query.title)
 
         # Inicia a sessão para busca e deleção do item
         session = Session()
@@ -141,7 +144,7 @@ def delete_videogame(query: SearchOneGameSchema):
         
         else:
 
-            return "Videogame não encontrado!", 404
+            return f"Videogame não encontrado! {searched_game}", 404
     
     except Exception as e:
         # Erro inesperado
