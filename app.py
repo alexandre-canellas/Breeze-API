@@ -18,7 +18,7 @@ def home():
 
 ####################################        ROUTE DE CADASTRO       ####################################
 
-@app.post('/videogame', 
+@app.post('/videogame_add', 
           responses={"200": VideogameSchema, "409": ErrorSchema, "500": ErrorSchema})
 def add_videogame(form: VideogameSchema):
     """
@@ -54,7 +54,7 @@ def add_videogame(form: VideogameSchema):
     
 ####################################        ROUTE DE BUSCA       ####################################
     
-@app.get('/videogame',
+@app.get('/videogame_view',
          responses={"200": VideogameSchema, "404": ErrorSchema, "500": ErrorSchema})
 def search_videogame(query: SearchOneGameSchema):
     """
@@ -85,7 +85,7 @@ def search_videogame(query: SearchOneGameSchema):
 
         return "Erro de servidor", 500
     
-@app.get('/all_videogames',
+@app.get('/videogame_view_all',
          responses={"200": AllVideogamesSchema, "500": ErrorSchema})
 def search_all_videogames():
     """
@@ -115,7 +115,7 @@ def search_all_videogames():
     
 ####################################        ROUTE DE DELEÇÃO       ####################################
 
-@app.delete('/videogame',
+@app.delete('/videogame_delete',
             responses={"200": ProdutoDelSchema, "404": ErrorSchema, "500": ErrorSchema})
 def delete_videogame(query: SearchOneGameSchema):
     """
